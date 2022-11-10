@@ -22,32 +22,42 @@ function init() {
 				},
 			])
       .then((response) => {
-        switch(response) {
-					case response.selection == "View all departments":
+				// switch case strictly compares response.selection with options
+				// calls the next inquirer prompt to execute
+        switch(response.selection) { 
+					case "View all departments":
 						viewDepartments();
-					case response.selection == "View all roles":
+						break;
+					case "View all roles":
 						viewRoles();
-					case response.selection == "View all employees":
+						break;
+					case "View all employees":
 						viewEmployees();
-					case response.selection == "Add a department":
+						break;
+					case "Add a department":
 						addDepartment();
-					case response.selection == "Add a role":
+						break;
+					case "Add a role":
 						addRole();
-					case response.selection == "Add an employee": 
+						break;
+					case "Add an employee": 
 						addEmployee();
-					case response.selection == "Update an employee's role":
+						break;
+					case "Update an employee's role":
 						updateEmployeeRole();
+						break;
 				}
-			})
-  }
+			})			
+  };
 
-  function viewDepartments() {}
-  function viewRoles() {}
-  function viewEmployees() {}
-  function addDepartment() {}
-  function addRole() {}
-  function addEmployee() {}
-  function updateEmployeeRole() {}
+	/// These can be above or below the initialSelection function and still works. 
+	function viewDepartments() {console.log("Hello test viewDepartments function")}
+	function viewRoles() {}
+	function viewEmployees() {}
+	function addDepartment() {}
+	function addRole() {}
+	function addEmployee() {}
+	function updateEmployeeRole() {}
 
   initialSelection();
 }
