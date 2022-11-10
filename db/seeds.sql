@@ -13,7 +13,7 @@ VALUES
     ("Salesperson", "Sales", "80000"),
     ("Lead Engineer", "Engineering", "150000"),
     ("Software Engineer", "Engineering", "120000"),
-    ("Account Manager", "Finance", "160000"), 
+    ("Account Manager", "Finance", "160000"),
     ("Accountant", "Finance", "125000"),
     ("Lawyer", "Legal", "190000"),
     ("Legal Team Lead", "Legal", "250000");

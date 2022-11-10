@@ -1,4 +1,8 @@
 const inquirer = require("inquirer");
+const db = require('./config/connection');
+
+const Departments = require(''); // Is this needed? 
+
 
 function init() {
   
@@ -51,7 +55,12 @@ function init() {
   };
 
 	/// These can be above or below the initialSelection function and still works. 
-	function viewDepartments() {}
+	function viewDepartments() {
+		const sql = 
+		console.table('Departments', [
+
+		])
+	}
 	function viewRoles() {}
 	function viewEmployees() {}
 	
