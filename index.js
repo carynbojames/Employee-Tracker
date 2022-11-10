@@ -65,7 +65,12 @@ function init() {
 				}
 			])
 			.then((response) => {
-				
+				/// QUESTION: Where are we sending the data?
+				const department = new Department(
+					response.departmentName
+				)
+				xxxxx.push(department)
+				initialSelection()
 			})
 	}
 	function addRole() {}
