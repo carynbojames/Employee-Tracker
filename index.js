@@ -51,10 +51,23 @@ function init() {
   };
 
 	/// These can be above or below the initialSelection function and still works. 
-	function viewDepartments() {console.log("Hello test viewDepartments function")}
+	function viewDepartments() {}
 	function viewRoles() {}
 	function viewEmployees() {}
-	function addDepartment() {}
+	
+	function addDepartment() {
+		inquirer
+			.prompt([
+				{
+					type: "input",
+					message: "Enter department name",
+					name: "departmentName"
+				}
+			])
+			.then((response) => {
+				
+			})
+	}
 	function addRole() {}
 	function addEmployee() {}
 	function updateEmployeeRole() {}
