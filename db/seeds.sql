@@ -7,13 +7,13 @@ VALUES
     ("Sales");
 
 INSERT INTO
-    roles (title, department, salary)
+    roles (title, salary, department)
 VALUES
-    ("Sales Lead", "Sales", "100000"),
-    ("Salesperson", "Sales", "80000"),
-    ("Lead Engineer", "Engineering", "150000"),
-    ("Software Engineer", "Engineering", "120000"),
-    ("Account Manager", "Finance", "160000"),
-    ("Accountant", "Finance", "125000"),
-    ("Lawyer", "Legal", "190000"),
-    ("Legal Team Lead", "Legal", "250000");
+    ("Lead Engineer", "150000", 1),
+    ("Software Engineer", "120000", 1),
+    ("Account Manager", "160000", 2),
+    ("Accountant", "125000", 2),
+    ("Lawyer", "190000", 3),
+    ("Legal Team Lead", "250000", 3),
+    ("Sales Lead", "100000", 4),
+    ("Salesperson", "80000", 4);

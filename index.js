@@ -1,8 +1,20 @@
 const inquirer = require("inquirer");
-const db = require('./config/connection');
+const mysql = require('mysql2'); 
+// const db = require('./config/connection');
+/// Why does uncommenting the above cause the inquirer drop down not to work? 
 
-const Departments = require(''); // Is this needed? 
+// const Departments = require(''); // Is this needed? 
 
+// Connect to database
+const db = mysql.createConnection(
+	{
+		host: 'localhost', 
+		user: 'root', 
+		password: '',
+		database: 'company_db'
+	},
+	console.log("Connected to the company_db database")
+)
 
 function init() {
   
@@ -56,11 +68,13 @@ function init() {
 
 	/// These can be above or below the initialSelection function and still works. 
 	function viewDepartments() {
-		const sql = 
-		console.table('Departments', [
+		db.query('SELECT * FROM departments', function (err, results) { 
+			console.log(results)
+			console.table(results) // Formatting isn't correct
+		})
+		initialSelection();
+	};
 
-		])
-	}
 	function viewRoles() {}
 	function viewEmployees() {}
 	
@@ -74,14 +88,13 @@ function init() {
 				}
 			])
 			.then((response) => {
-				/// QUESTION: Where are we sending the data?
-				const department = new Department(
-					response.departmentName
-				)
-				xxxxx.push(department)
+				db.query(`INSERT INTO departments (name) VALUES (${response.name}`, function(err, results) {
+					console.log(results)
+				})
 				initialSelection()
-			})
+			})	
 	}
+
 	function addRole() {}
 	function addEmployee() {}
 	function updateEmployeeRole() {}
