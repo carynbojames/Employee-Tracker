@@ -58,9 +58,7 @@ function init() {
   /// These can be above or below the initialSelection function and still works.
   function viewDepartments() {
     db.query("SELECT * FROM departments", function (err, results) {
-      let departmentsArr = results;
-      console.log(departmentsArr);
-      console.table("Departments", departmentsArr);
+      console.table("Departments", results);
     });
     initialSelection();
   }
@@ -106,8 +104,9 @@ function init() {
   }
 
   function addRole() {
+    let departmentsArr = []
+    
     function runInquirer() {
-      let departmentsArr = ["Engineering", "Finance", "Legal", "Sales"];
       inquirer
         .prompt([
           {
@@ -141,15 +140,24 @@ function init() {
         });
     }
 
+    // Create a dynamic list of departments values for inquirer prompt
+    // Run query of the departments table 
     const sql = "SELECT * FROM departments";
     db.promise()
-      .query(sql)
-      .then(([rows, _]) => {
-        let deptsTable = rows;
-        console.log('deptsTable', deptsTable);
-        runInquirer();
-      })
-      .catch((err) => console.log(err));
+    .query(sql)
+    .then(([rows, _]) => {
+      // Data from the departments table is returned as an array of objects
+      let deptsTable = rows; 
+      console.log("deptsTable", deptsTable);
+      // Convert the array of objects to an array for the inquirer prompt
+      for (var i = 0; i < rows.length; i++) {
+        rowsArray = (Object.values(rows[i]))
+        departmentsArr.push(rowsArray[1])
+      }
+      console.log(departmentsArr)
+      runInquirer();
+    })
+    .catch((err) => console.log(err));
   }
 
   function addEmployee() {
