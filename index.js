@@ -65,7 +65,7 @@ function init() {
 
   function viewRoles() {
     const sql =
-      "SELECT * FROM roles JOIN departments ON roles.department_id = departments.id";
+      "SELECT * FROM roles JOIN departments ON roles.dept_id = departments.dept_id";
     db.promise()
       .query(sql)
       .then(([rows, _]) => {
@@ -104,8 +104,8 @@ function init() {
   }
 
   function addRole() {
-    let departmentsArr = []
-    let departmentsObj = []
+    let departmentsArr = [] // Passed into the inquirer question
+    let departmentsObj = [] // Used to convert department name to a department id
     
     function runInquirer() {
       inquirer
@@ -140,7 +140,7 @@ function init() {
           // Isolate the object that has the selected department name
           let indexArr = departmentsObj[findIndex]
           console.log('indexArr', indexArr)
-          
+
           // Return the department id
           let departmentId = indexArr.id
           console.log('departmentId', departmentId)
