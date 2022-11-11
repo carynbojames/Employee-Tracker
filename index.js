@@ -105,6 +105,7 @@ function init() {
 
   function addRole() {
     let departmentsArr = []
+    let departmentsObj = []
     
     function runInquirer() {
       inquirer
@@ -123,16 +124,29 @@ function init() {
             type: "list",
             message: "Select department",
             choices: departmentsArr,
-            name: "departmentId",
+            name: "department",
           },
         ])
         .then((response) => {
-          // Tempporary Solution
-          let departmentLoc = departmentsArr.indexOf(response.departmentId);
-          let departmentVal = departmentLoc + 1;
 
-          // Code in Progress
-          const sql = `INSERT INTO roles (title, salary, department_id) VALUES ("${response.title}", "${response.salary}", "${departmentVal}")`;
+          // Convert the selected department string to the department id
+          console.log('Selected Department', response.department)
+          console.log('deptsObj', departmentsObj)
+          
+          // Find the index array value w/ the selected department name in the array of objects
+          let findIndex = departmentsObj.findIndex((values) => values.name === response.department) 
+          console.log('findIndex', findIndex)
+
+          // Isolate the object that has the selected department name
+          let indexArr = departmentsObj[findIndex]
+          console.log('indexArr', indexArr)
+          
+          // Return the department id
+          let departmentId = indexArr.id
+          console.log('departmentId', departmentId)
+
+          // Run the query
+          const sql = `INSERT INTO roles (title, salary, department_id) VALUES ("${response.title}", "${response.salary}", "${departmentId}")`;
           db.promise()
             .query(sql)
             .then(() => initialSelection())
@@ -146,12 +160,17 @@ function init() {
     db.promise()
     .query(sql)
     .then(([rows, _]) => {
-      // Data from the departments table is returned as an array of objects
-      let deptsTable = rows; 
-      console.log("deptsTable", deptsTable);
-      // Convert the array of objects to an array for the inquirer prompt
+      // --- Data from the departments table is queried and returned as an array of objects ---
+      console.log("deptsTable", rows);
+      departmentsObj = rows
+      console.log('deptsObj', departmentsObj)
+
+      // --- Convert the array of objects to an array for the inquirer prompt ---
       for (var i = 0; i < rows.length; i++) {
-        rowsArray = (Object.values(rows[i]))
+        // Converts each object in the array of objects to an array
+        rowsArray = (Object.values(rows[i])) 
+        // The first index value is added to a new array
+        // The departments array holds all the department names and is passed into an inquirer question
         departmentsArr.push(rowsArray[1])
       }
       console.log(departmentsArr)
