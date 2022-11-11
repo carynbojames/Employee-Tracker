@@ -2,7 +2,6 @@ const inquirer = require("inquirer");
 require("console.table");
 const db = require("./config/connection");
 
-
 function init() {
   // Create initial drop down menu
   function initialSelection() {
@@ -19,7 +18,7 @@ function init() {
             "Add a role",
             "Add an employee",
             "Update an employee's role",
-            "Quit"
+            "Quit",
           ],
           name: "selection",
         },
@@ -50,7 +49,7 @@ function init() {
             updateEmployeeRole();
             break;
           case "Quit":
-            console.log("Goodbye")
+            console.log("Goodbye");
             break;
         }
       });
@@ -107,7 +106,6 @@ function init() {
   }
 
   function addRole() {
-    
     function runInquirer() {
       let departmentsArr = ["Engineering", "Finance", "Legal", "Sales"];
       inquirer
@@ -147,11 +145,11 @@ function init() {
     db.promise()
       .query(sql)
       .then(([rows, _]) => {
-        console.log(rows)
-        runInquirer()
+        let deptsTable = rows;
+        console.log('deptsTable', deptsTable);
+        runInquirer();
       })
       .catch((err) => console.log(err));
-    ;
   }
 
   function addEmployee() {
