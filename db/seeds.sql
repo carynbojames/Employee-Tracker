@@ -19,7 +19,7 @@ VALUES
     ("Salesperson", "80000", 4);
 
 INSERT INTO
-    employees (first_name, last_name, role_id, manager)
+    employees (first_name, last_name, role_id, manager_id)
 VALUES
     ("John", "Doe", 7, null),
     ("Mike", "Chan", 8, 1),

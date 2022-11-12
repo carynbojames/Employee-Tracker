@@ -32,3 +32,10 @@ db.query(
     console.log("empId", empId);
   }
 );
+
+let fullName = "John Doe"
+let array01 = fullName.split(' ')
+console.log('John Doe:', array01)
+
+let array02 = fullName.split(" ")
+console.log('John Doe:', array02)

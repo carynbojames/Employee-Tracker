@@ -77,7 +77,19 @@ function init() {
 
   function viewEmployees() {
     db.query(
-      "SELECT employees.emp_id, employees.first_name, employees.last_name, departments.dept, roles.title, roles.salary, employees.manager FROM employees JOIN roles ON employees.role_id = roles.role_id JOIN departments ON roles.dept_id = departments.dept_id",
+      `SELECT
+        employees.emp_id,
+        employees.first_name,
+        employees.last_name,
+        departments.dept,
+        roles.title,
+        roles.salary,
+        CONCAT (mgr.first_name, ' ', mgr.last_name) AS manager
+      FROM
+        employees
+        LEFT JOIN employees mgr ON mgr.emp_id = employees.manager_id
+        JOIN roles ON employees.role_id = roles.role_id
+        JOIN departments ON roles.dept_id = departments.dept_id`,
       function (err, results) {
         console.table("", results);
       }
@@ -95,7 +107,7 @@ function init() {
         },
       ])
       .then((response) => {
-        const sql = `INSERT INTO departments (name) VALUES ("${response.department}")`;
+        const sql = `INSERT INTO departments (dept) VALUES ("${response.department}")`;
         db.promise()
           .query(sql)
           .then(() => initialSelection())
@@ -104,8 +116,8 @@ function init() {
   }
 
   function addRole() {
-    let departmentsArr = [] // Passed into the inquirer question
-    let departmentsObj = [] // Used to convert department name to a department id
+    let departmentsArr = []; // Passed into the inquirer question
+    let departmentsObj = []; // Used to convert department name to a department id
 
     function runInquirer() {
       inquirer
@@ -134,7 +146,7 @@ function init() {
 
           // Find the index array value w/ the selected department name in the array of objects
           let findIndex = departmentsObj.findIndex(
-            (values) => values.name === response.dept
+            (values) => values.dept === response.department
           );
           console.log("findIndex", findIndex);
 
@@ -163,7 +175,7 @@ function init() {
       .then(([rows, _]) => {
         // --- Data from the departments table is queried and returned as an array of objects ---
         console.log("deptsTable", rows);
-        
+
         // --- Convert the array of objects to an array for the inquirer prompt ---
         for (var i = 0; i < rows.length; i++) {
           // Converts each object in the array of objects to an array
@@ -173,15 +185,17 @@ function init() {
           departmentsArr.push(rowsArray[1]);
         }
         console.log(departmentsArr);
-        departmentsObj = rows
+        departmentsObj = rows;
         runInquirer();
       })
       .catch((err) => console.log(err));
   }
 
   function addEmployee() {
-    let rolesArr = []
-    let rolesObj = []
+    let rolesArr = [];
+    let rolesObj = [];
+    let managerArr = [];
+    let managerObj = [];
 
     function runInquirer() {
       inquirer
@@ -201,17 +215,38 @@ function init() {
             message: "Select role",
             choices: rolesArr,
             name: "roles",
-          }
+          },
+          {
+            type: "list",
+            message: "Select manager",
+            choices: managerArr,
+            name: "manager",
+          },
         ])
         .then((response) => {
-          let findIndex = rolesObj.findIndex((values) => values.title === response.roles)
-          let indexArr = rolesObj[findIndex]
-          let roleId = indexArr.role_id
+          // Convert selected role from string to role_id
+          let findIndexRole = rolesObj.findIndex(
+            (values) => values.title === response.roles
+          );
+          let indexArrRole = rolesObj[findIndexRole];
+          let roleId = indexArrRole.role_id;
 
-          console.log('indexArr', indexArr)
-          console.log('roleId', roleId)
+          console.log("indexArr", indexArrRole);
+          console.log("roleId", roleId);
+          
+          // Convert selected manager from string to manager_id
+          let manager = response.manager
+          let managerSplit = manager.split(' ')
+          let findIndexMgr = managerObj.findIndex(
+            (values) => values.first_name === managerSplit[0] && values.last_name === managerSplit[1]
+          );
+          let indexArrMgr = managerObj[findIndexMgr]
+          let managerId = indexArrMgr.emp_id;
 
-          const sql = `INSERT INTO employees (first_name, last_name, role_id, manager) VALUES ("${response.firstName}", "${response.lastName}", "${roleId}", 2)`;
+          console.log('managerSplit:', managerSplit)
+          console.log('managerId:', managerId)
+
+          const sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ("${response.firstName}", "${response.lastName}", "${roleId}", "${managerId}")`;
           db.promise()
             .query(sql)
             .then(() => initialSelection())
@@ -219,17 +254,29 @@ function init() {
         });
     }
 
-    const sql = "SELECT role_id, title FROM roles";
+    const sqlRoles = "SELECT role_id, title FROM roles";
     db.promise()
-      .query(sql)
+      .query(sqlRoles)
       .then(([rows, _]) => {
         for (var i = 0; i < rows.length; i++) {
           rowsArr = Object.values(rows[i]);
           rolesArr.push(rowsArr[1]);
         }
-        runInquirer()
-        rolesObj = rows
+        rolesObj = rows;
         console.log(rolesArr);
+      })
+      .catch((err) => console.log(err));
+
+    const sqlEmp = "SELECT emp_id, first_name, last_name FROM employees";
+    db.promise()
+      .query(sqlEmp)
+      .then(([rows, _]) => {
+        for (var i = 0; i < rows.length; i++) {
+          rowsArr = Object.values(rows[i]);
+          managerArr.push(`${rowsArr[1]} ${rowsArr[2]}`);
+        }
+        managerObj = rows;
+        runInquirer();
       })
       .catch((err) => console.log(err));
   }
