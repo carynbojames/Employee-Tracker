@@ -37,47 +37,6 @@ db.query("SELECT * FROM departments", function (err, results) {
   // console.log(DepartmentValues)
 });
 
-// Concat Values ---
-db.query("SELECT * FROM employees", (err, results) => {
-    console.log(results)
-    // let firstName = Object.values(results[1])
-    console.log(Object.values(results[1]))
-    // let lastName = Object.values(results[2])
-    console.log(Object.values(results[2]))
-    // let fullName = `${firstName} ${lastName}`
-    // console.log("Full Name", fullName)
-
-    let nameArr = []
-
-    // for (var i = 0; i < results.length; i++) {
-    //     let firstName = Object.values(results[1])
-    //     let lastName = Object.values(results[2])
-    //     let fullName = `${firstName} ${lastName}`
-        
-    //     nameArr.push(fullName) 
-    // }
-    // console.log('Name Array', nameArr)
-})
-
-
-// Test Concepts ---
-const person = {
-  firstName: "John",
-  lastName: "Doe",
-  age: 50,
-  eyeColor: "blue",
-};
-
-console.log(person);
-
-const keys = Object.keys(person);
-console.log(keys);
-
-const values = Object.values(person);
-console.log(values);
-
-console.log("Object.entries", Object.entries(person)); // returns arrays of arrays
-
 
 // let deptsDynamic = [];
 //         deptsTable.forEach(deptsDynamic.push(deptsTable[1]));
