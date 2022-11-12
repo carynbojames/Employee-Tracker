@@ -18,10 +18,11 @@ db.promise()
     console.log('rolesObj', rolesObj)
     
     let findIndex = rolesObj.findIndex((values) => values.title === "Sales Lead");
-    console.log(findIndex)
     let indexArr = rolesObj[findIndex]
-    console.log(indexArr)
     let roleId = indexArr.role_id
+    
+    console.log(findIndex)
+    console.log(indexArr)
     console.log(roleId)
     })
   .catch((err) => console.log(err));

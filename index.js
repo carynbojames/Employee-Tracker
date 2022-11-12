@@ -201,11 +201,17 @@ function init() {
             message: "Select role",
             choices: rolesArr,
             name: "roles",
-          },
+          }
         ])
         .then((response) => {
-          // Code in Progress
-          const sql = `INSERT INTO employees (first_name, last_name, role_id, manager) VALUES ("${response.firstName}", "${response.lastName}", "${response.roles}", 2)`;
+          let findIndex = rolesObj.findIndex((values) => values.title === response.roles)
+          let indexArr = rolesObj[findIndex]
+          let roleId = indexArr.role_id
+
+          console.log('indexArr', indexArr)
+          console.log('roleId', roleId)
+
+          const sql = `INSERT INTO employees (first_name, last_name, role_id, manager) VALUES ("${response.firstName}", "${response.lastName}", "${roleId}", 2)`;
           db.promise()
             .query(sql)
             .then(() => initialSelection())
@@ -213,15 +219,16 @@ function init() {
         });
     }
 
-    const sql = "SELECT title FROM roles";
+    const sql = "SELECT role_id, title FROM roles";
     db.promise()
       .query(sql)
       .then(([rows, _]) => {
         for (var i = 0; i < rows.length; i++) {
           rowsArr = Object.values(rows[i]);
-          rolesArr.push(rowsArr[0]);
+          rolesArr.push(rowsArr[1]);
         }
         runInquirer()
+        rolesObj = rows
         console.log(rolesArr);
       })
       .catch((err) => console.log(err));
@@ -258,7 +265,7 @@ function init() {
         let rolesVal = rolesLoc + 1;
 
         // Code in Progress
-        const sql = `UPDATE employees SET role_id = ${rolesVal} WHERE emp_id = ${firstName}, last_name = ${lastName}`;
+        const sql = `UPDATE employees SET role_id = ${rolesVal} WHERE emp_id = ${firstName}`;
         db.promise()
           .query(sql)
           .then(() => initialSelection())
