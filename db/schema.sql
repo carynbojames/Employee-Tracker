@@ -7,12 +7,13 @@ USE company_db;
 CREATE TABLE
     departments (
         dept_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(100) NOT NULL
+        dept VARCHAR(100) NOT NULL
     );
 
 CREATE TABLE
     roles (
-        role_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        role_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+        -- also a primary key for employees table
         title VARCHAR(30) NOT NULL,
         salary DECIMAL NOT NULL,
         dept_id INT,
@@ -24,8 +25,8 @@ CREATE TABLE
         emp_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         first_name VARCHAR(30) NOT NULL,
         last_name VARCHAR(30) NOT NULL,
-        role_id INT
-        -- manager_id INT
-        -- FOREIGN KEY (role_id) REFERENCES roles (id),
+        role_id INT,
+        -- manager_id INT,
+        FOREIGN KEY (role_id) REFERENCES roles (role_id)
         -- FOREIGN KEY (manager_id) REFERENCES employees(id)
     );

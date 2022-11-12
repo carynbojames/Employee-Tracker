@@ -77,7 +77,7 @@ function init() {
 
   function viewEmployees() {
     db.query(
-      "SELECT * FROM employees JOIN roles ON employees.role_id = roles.department_id",
+      "SELECT employees.emp_id, employees.first_name, employees.last_name, departments.dept, roles.title, roles.salary FROM employees JOIN roles ON employees.role_id = roles.role_id JOIN departments ON roles.dept_id = departments.dept_id",
       function (err, results) {
         console.table("Employees", results);
       }
@@ -91,11 +91,11 @@ function init() {
         {
           type: "input",
           message: "Enter department name",
-          name: "departmentName",
+          name: "department",
         },
       ])
       .then((response) => {
-        const sql = `INSERT INTO departments (name) VALUES ("${response.departmentName}")`;
+        const sql = `INSERT INTO departments (name) VALUES ("${response.department}")`;
         db.promise()
           .query(sql)
           .then(() => initialSelection())
@@ -104,9 +104,9 @@ function init() {
   }
 
   function addRole() {
-    let departmentsArr = [] // Passed into the inquirer question
-    let departmentsObj = [] // Used to convert department name to a department id
-    
+    let departmentsArr = []; // Passed into the inquirer question
+    let departmentsObj = []; // Used to convert department name to a department id
+
     function runInquirer() {
       inquirer
         .prompt([
@@ -128,25 +128,26 @@ function init() {
           },
         ])
         .then((response) => {
-
           // Convert the selected department string to the department id
-          console.log('Selected Department', response.department)
-          console.log('deptsObj', departmentsObj)
-          
+          console.log("Selected Department", response.department);
+          console.log("deptsObj", departmentsObj);
+
           // Find the index array value w/ the selected department name in the array of objects
-          let findIndex = departmentsObj.findIndex((values) => values.name === response.department) 
-          console.log('findIndex', findIndex)
+          let findIndex = departmentsObj.findIndex(
+            (values) => values.name === response.department
+          );
+          console.log("findIndex", findIndex);
 
           // Isolate the object that has the selected department name
-          let indexArr = departmentsObj[findIndex]
-          console.log('indexArr', indexArr)
+          let indexArr = departmentsObj[findIndex];
+          console.log("indexArr", indexArr);
 
           // Return the department id
-          let departmentId = indexArr.id
-          console.log('departmentId', departmentId)
+          let departmentId = indexArr.dept_id;
+          console.log("departmentId", departmentId);
 
           // Run the query
-          const sql = `INSERT INTO roles (title, salary, department_id) VALUES ("${response.title}", "${response.salary}", "${departmentId}")`;
+          const sql = `INSERT INTO roles (title, salary, dept_id) VALUES ("${response.title}", "${response.salary}", "${departmentId}")`;
           db.promise()
             .query(sql)
             .then(() => initialSelection())
@@ -155,28 +156,28 @@ function init() {
     }
 
     // Create a dynamic list of departments values for inquirer prompt
-    // Run query of the departments table 
+    // Run query of the departments table
     const sql = "SELECT * FROM departments";
     db.promise()
-    .query(sql)
-    .then(([rows, _]) => {
-      // --- Data from the departments table is queried and returned as an array of objects ---
-      console.log("deptsTable", rows);
-      departmentsObj = rows
-      console.log('deptsObj', departmentsObj)
+      .query(sql)
+      .then(([rows, _]) => {
+        // --- Data from the departments table is queried and returned as an array of objects ---
+        console.log("deptsTable", rows);
+        departmentsObj = rows;
+        console.log("deptsObj", departmentsObj);
 
-      // --- Convert the array of objects to an array for the inquirer prompt ---
-      for (var i = 0; i < rows.length; i++) {
-        // Converts each object in the array of objects to an array
-        rowsArray = (Object.values(rows[i])) 
-        // The first index value is added to a new array
-        // The departments array holds all the department names and is passed into an inquirer question
-        departmentsArr.push(rowsArray[1])
-      }
-      console.log(departmentsArr)
-      runInquirer();
-    })
-    .catch((err) => console.log(err));
+        // --- Convert the array of objects to an array for the inquirer prompt ---
+        for (var i = 0; i < rows.length; i++) {
+          // Converts each object in the array of objects to an array
+          rowsArray = Object.values(rows[i]);
+          // The first index value is added to a new array
+          // The departments array holds all the department names and is passed into an inquirer question
+          departmentsArr.push(rowsArray[1]);
+        }
+        console.log(departmentsArr);
+        runInquirer();
+      })
+      .catch((err) => console.log(err));
   }
 
   function addEmployee() {
