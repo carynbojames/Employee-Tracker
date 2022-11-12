@@ -83,3 +83,7 @@ console.log("Object.entries", Object.entries(person)); // returns arrays of arra
 // let deptsDynamic = [];
 //         deptsTable.forEach(deptsDynamic.push(deptsTable[1]));
 //         console.log('deptsDynamic', deptsDynamic);
+
+
+
+

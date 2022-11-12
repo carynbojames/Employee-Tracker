@@ -2,6 +2,10 @@ const inquirer = require("inquirer");
 require("console.table");
 const db = require("./config/connection");
 
+
+
+
+
 function init() {
   // Create initial drop down menu
   function initialSelection() {
@@ -50,7 +54,7 @@ function init() {
             break;
           case "Quit":
             console.log("Goodbye");
-            break;
+            process.exit();
         }
       });
   }
@@ -223,7 +227,9 @@ function init() {
       "Ashley Rodriguez",
       "Kevin Tupik",
     ];
+
     let rolesArr = ["Lead Engineer", "Software Engineer", "Account Manager"];
+
     inquirer
       .prompt([
         {
@@ -247,7 +253,7 @@ function init() {
         let lastName;
 
         // Code in Progress
-        const sql = `UPDATE employees SET name = ${rolesVal} WHERE first_name = ${firstName}, last_name = ${lastName}`;
+        const sql = `UPDATE employees SET role_id = ${rolesVal} WHERE emp_id = ${firstName}, last_name = ${lastName}`;
         db.promise()
           .query(sql)
           .then(() => initialSelection())
