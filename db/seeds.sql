@@ -19,9 +19,11 @@ VALUES
     ("Salesperson", "80000", 4);
 
 INSERT INTO
-    employees (first_name, last_name, role_id)
+    employees (first_name, last_name, role_id, manager)
 VALUES
-    ("John", "Doe", 7),
-    ("Mike", "Chan", 8),
-    ("Ashley", "Rodriguez", 1), 
-    ("Kevin", "Tupik", 2); 
+    ("John", "Doe", 7, null),
+    ("Mike", "Chan", 8, 1),
+    ("Ashley", "Rodriguez", 1, null), 
+    ("Kevin", "Tupik", 2, 3),
+    ("Kunal", "Singh", 3, null),
+    ("Malia", "Brown", 4, 5);

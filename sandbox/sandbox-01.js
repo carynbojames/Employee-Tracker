@@ -5,26 +5,25 @@ const db = require("../config/connection");
 db.query("SELECT * FROM departments", function (err, results) {
   console.log(results);
 
-  let array01 = [];
-  let array02 = [];
+  let resultsArr = [];
 
   for (var i = 0; i < results.length; i++) {
     console.log('Object.values(results)', Object.values(results))
 
-    array01 = Object.values(results[i]);
-    console.log('Object.values(results[i])', array01);
-    array02.push(array01[1]);
+    resultsObj = Object.values(results[i]);
+    console.log('Object.values(results[i])', resultsObj);
+    resultsArr.push(resultsObj[1]);
     // for (var i = 0; i < array01.length; i++) {
     //     array02.push([array01[1]])
   }
-  console.log(array02);
+  console.log(resultsArr);
 
   // This finds the value within the array of objects to be able to get the department id that matches with the string value 
-  let findIndex = results.findIndex((values) => values.name === 'Finance') 
+  let findIndex = results.findIndex((values) => values.dept === 'Finance') 
   console.log('indexOf', findIndex)
-  let indexArr = results[findIndex]
-  console.log('indexArr', indexArr)
-  let indexVal = indexArrPos.id
+  let indexArrPos = results[findIndex]
+  console.log('indexArr', indexArrPos)
+  let indexVal = indexArrPos.dept_id
   console.log('indexVal', indexVal)
 
 
@@ -83,7 +82,3 @@ console.log("Object.entries", Object.entries(person)); // returns arrays of arra
 // let deptsDynamic = [];
 //         deptsTable.forEach(deptsDynamic.push(deptsTable[1]));
 //         console.log('deptsDynamic', deptsDynamic);
-
-
-
-

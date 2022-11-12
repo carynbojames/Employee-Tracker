@@ -2,10 +2,6 @@ const inquirer = require("inquirer");
 require("console.table");
 const db = require("./config/connection");
 
-
-
-
-
 function init() {
   // Create initial drop down menu
   function initialSelection() {
@@ -81,9 +77,9 @@ function init() {
 
   function viewEmployees() {
     db.query(
-      "SELECT employees.emp_id, employees.first_name, employees.last_name, departments.dept, roles.title, roles.salary FROM employees JOIN roles ON employees.role_id = roles.role_id JOIN departments ON roles.dept_id = departments.dept_id",
+      "SELECT employees.emp_id, employees.first_name, employees.last_name, departments.dept, roles.title, roles.salary, employees.manager FROM employees JOIN roles ON employees.role_id = roles.role_id JOIN departments ON roles.dept_id = departments.dept_id",
       function (err, results) {
-        console.table("Employees", results);
+        console.table("", results);
       }
     );
     initialSelection();
@@ -108,8 +104,8 @@ function init() {
   }
 
   function addRole() {
-    let departmentsArr = []; // Passed into the inquirer question
-    let departmentsObj = []; // Used to convert department name to a department id
+    let departmentsArr = [] // Passed into the inquirer question
+    let departmentsObj = [] // Used to convert department name to a department id
 
     function runInquirer() {
       inquirer
@@ -138,7 +134,7 @@ function init() {
 
           // Find the index array value w/ the selected department name in the array of objects
           let findIndex = departmentsObj.findIndex(
-            (values) => values.name === response.department
+            (values) => values.name === response.dept
           );
           console.log("findIndex", findIndex);
 
@@ -167,9 +163,7 @@ function init() {
       .then(([rows, _]) => {
         // --- Data from the departments table is queried and returned as an array of objects ---
         console.log("deptsTable", rows);
-        departmentsObj = rows;
-        console.log("deptsObj", departmentsObj);
-
+        
         // --- Convert the array of objects to an array for the inquirer prompt ---
         for (var i = 0; i < rows.length; i++) {
           // Converts each object in the array of objects to an array
@@ -179,45 +173,58 @@ function init() {
           departmentsArr.push(rowsArray[1]);
         }
         console.log(departmentsArr);
+        departmentsObj = rows
         runInquirer();
       })
       .catch((err) => console.log(err));
   }
 
   function addEmployee() {
-    let rolesArr = ["Lead Engineer", "Software Engineer", "Account Manager"];
+    let rolesArr = []
+    let rolesObj = []
 
-    inquirer
-      .prompt([
-        {
-          type: "input",
-          message: "Enter first name",
-          name: "firstName",
-        },
-        {
-          type: "input",
-          message: "Enter last name",
-          name: "lastName",
-        },
-        {
-          type: "list",
-          message: "Select role",
-          choices: rolesArr,
-          name: "roles",
-        },
-      ])
-      .then((response) => {
-        // Temporary Solution
-        let rolesLoc = rolesArr.indexOf(response.roles);
-        let rolesVal = rolesLoc + 1;
+    function runInquirer() {
+      inquirer
+        .prompt([
+          {
+            type: "input",
+            message: "Enter first name",
+            name: "firstName",
+          },
+          {
+            type: "input",
+            message: "Enter last name",
+            name: "lastName",
+          },
+          {
+            type: "list",
+            message: "Select role",
+            choices: rolesArr,
+            name: "roles",
+          },
+        ])
+        .then((response) => {
+          // Code in Progress
+          const sql = `INSERT INTO employees (first_name, last_name, role_id, manager) VALUES ("${response.firstName}", "${response.lastName}", "${response.roles}", 2)`;
+          db.promise()
+            .query(sql)
+            .then(() => initialSelection())
+            .catch((err) => console.log(err));
+        });
+    }
 
-        // Code in Progress
-        const sql = `INSERT INTO roles (first_name, last_name, role_id) VALUES ("${response.firstName}", "${response.lastName}", "${rolesVal}")`;
-        db.promise()
-          .query(sql)
-          .then(() => initialSelection())
-          .catch((err) => console.log(err));
-      });
+    const sql = "SELECT title FROM roles";
+    db.promise()
+      .query(sql)
+      .then(([rows, _]) => {
+        for (var i = 0; i < rows.length; i++) {
+          rowsArr = Object.values(rows[i]);
+          rolesArr.push(rowsArr[0]);
+        }
+        runInquirer()
+        console.log(rolesArr);
+      })
+      .catch((err) => console.log(err));
   }
 
   function updateEmployeeRole() {
@@ -249,8 +256,6 @@ function init() {
         // Temporary Solution
         let rolesLoc = rolesArr.indexOf(response.roles);
         let rolesVal = rolesLoc + 1;
-        let firstName;
-        let lastName;
 
         // Code in Progress
         const sql = `UPDATE employees SET role_id = ${rolesVal} WHERE emp_id = ${firstName}, last_name = ${lastName}`;
