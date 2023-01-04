@@ -5,9 +5,9 @@ const db = require("../config/connection");
 db.query(
   "SELECT emp_id, first_name, last_name FROM employees",
   (err, results) => {
-    console.log(results);
-    console.log(Object.values(results[1])); // index[1] converted from an obj to an array
-    console.log(Object.values(results[2])); // index[2] converted from an obj to an array
+    console.log('results', results);
+    console.log('results 1:', Object.values(results[1])); // index[1] converted from an obj to an array
+    console.log('results 2:', Object.values(results[2])); // index[2] converted from an obj to an array
 
     let employeesArr = [];
 
@@ -18,6 +18,7 @@ db.query(
       // console.log(fullName)
       // employeesArr.push(fullName)
 
+      // takes the index value of 1 and 2 from results array
       employeesArr.push(`${resultsArr[1]} ${resultsArr[2]}`);
     }
     console.log("Name Array", employeesArr);
@@ -33,6 +34,7 @@ db.query(
   }
 );
 
+// These are console logged before the query because of the stack
 let fullName = "John Doe"
 let array01 = fullName.split(' ')
 console.log('John Doe:', array01)

@@ -1,6 +1,6 @@
 const inquirer = require("inquirer");
-require("console.table");
 const db = require("./config/connection");
+require("console.table");
 
 function init() {
   // Create initial drop down menu
@@ -64,13 +64,14 @@ function init() {
   }
 
   function viewRoles() {
+    // define query
     const sql =
-      "SELECT * FROM roles JOIN departments ON roles.dept_id = departments.dept_id";
+      "SELECT * FROM roles JOIN departments ON roles.dept_id = departments.dept_id"; 
     db.promise()
-      .query(sql)
+      .query(sql) 
       .then(([rows, _]) => {
-        console.table("Roles", rows);
-        initialSelection();
+        console.table("Roles", rows); // display query results
+        initialSelection(); 
       })
       .catch((err) => console.log(err));
   }
@@ -186,6 +187,7 @@ function init() {
         }
         console.log(departmentsArr);
         departmentsObj = rows;
+        // After dynamic list is created, run inquirer for user prompts
         runInquirer();
       })
       .catch((err) => console.log(err));
@@ -246,6 +248,7 @@ function init() {
           console.log('managerSplit:', managerSplit)
           console.log('managerId:', managerId)
 
+          // roleId and managerId need to be broken down to be able to add to the database
           const sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ("${response.firstName}", "${response.lastName}", "${roleId}", "${managerId}")`;
           db.promise()
             .query(sql)
@@ -254,6 +257,7 @@ function init() {
         });
     }
 
+    // Populate rolesArr and rolesObj
     const sqlRoles = "SELECT role_id, title FROM roles";
     db.promise()
       .query(sqlRoles)
@@ -263,10 +267,11 @@ function init() {
           rolesArr.push(rowsArr[1]);
         }
         rolesObj = rows;
-        console.log(rolesArr);
+        console.log('rolesArr', rolesArr);
       })
       .catch((err) => console.log(err));
 
+    // Populate managerArr and managerObj
     const sqlEmp = "SELECT emp_id, first_name, last_name FROM employees";
     db.promise()
       .query(sqlEmp)
@@ -276,27 +281,27 @@ function init() {
           managerArr.push(`${rowsArr[1]} ${rowsArr[2]}`);
         }
         managerObj = rows;
+        console.log('managerArr', managerArr)
         runInquirer();
       })
       .catch((err) => console.log(err));
   }
 
   function updateEmployeeRole() {
-    let employeeArr = [
-      "John Doe",
-      "Mike Chan",
-      "Ashley Rodriguez",
-      "Kevin Tupik",
-    ];
+    let employeesArr = []
+    let employeesObj = []
+    let rolesArr = []
+    let rolesObj = []
+    let deptsArr = []
+    let deptsObj = []
 
-    let rolesArr = ["Lead Engineer", "Software Engineer", "Account Manager"];
-
-    inquirer
+    function runInquirer () {
+      inquirer
       .prompt([
         {
           type: "list",
           message: "Select employee",
-          choices: employeeArr,
+          choices: employeesArr,
           name: "employee",
         },
         {
@@ -305,6 +310,17 @@ function init() {
           choices: rolesArr,
           name: "roles",
         },
+        {
+          type: "salary",
+          message: 'Enter new salary',
+          name: "salary"
+        }, 
+        {
+          type: "list", 
+          message: "Select department",
+          choices: deptsArr,
+          name: "department"
+        }
       ])
       .then((response) => {
         // Temporary Solution
@@ -318,6 +334,44 @@ function init() {
           .then(() => initialSelection())
           .catch((err) => console.log(err));
       });
+    }
+    
+    // Populate employeeArr and employeeObj
+    const sqlEmp = 'SELECT emp_id, first_name, last_name FROM employees'
+    db.promise()
+      .query(sqlEmp)
+      .then(([rows, _]) => {
+        for (var i = 0; i < rows.length; i++) {
+          let rowsArr = Object.values(rows[i])
+          employeesArr.push(`${rowsArr[1]} ${rowsArr[2]}`)
+        }
+        console.log('employeeArr:', employeeArr)
+        employeesObj = rows
+      }).catch((err) => console.log(err))
+
+    // Populate rolesArr and rolesObj
+    const sqlRoles = "SELECT role_id, title FROM roles";
+    db.promise().query(sqlRoles).then(([rows, _]) => {
+      for (var i = 0; i < rows.length; i++) {
+        let rowsArr = Object.values(rows[i])
+        rolesArr.push(rowsArr[1])
+      }
+      console.log('rolesArr', rolesArr)
+      rolesObj = rows;
+    })
+    .catch((err) => console.log(err))
+
+    // Populate departmentsArr and departmentsObj
+    const sqlDept = 'SELECT * FROM departments'
+    db.promise().query(sqlDept).then(([rows, _]) => {
+      for (var i = 0; i < rows.lengths; i++) {
+        let rowsArr = Object.values(rows[i])
+        deptsArr.push(rowsArr[1])
+      }
+      console.log('deptsArr', deptsArr)
+      deptsObj = rows;
+      runInquirer()
+    })
   }
 
   initialSelection();
