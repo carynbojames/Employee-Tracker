@@ -292,8 +292,6 @@ function init() {
     let employeesObj = []
     let rolesArr = []
     let rolesObj = []
-    let deptsArr = []
-    let deptsObj = []
 
     function runInquirer () {
       inquirer
@@ -309,26 +307,28 @@ function init() {
           message: "Select new role",
           choices: rolesArr,
           name: "roles",
-        },
-        {
-          type: "salary",
-          message: 'Enter new salary',
-          name: "salary"
-        }, 
-        {
-          type: "list", 
-          message: "Select department",
-          choices: deptsArr,
-          name: "department"
         }
       ])
       .then((response) => {
-        // Temporary Solution
-        let rolesLoc = rolesArr.indexOf(response.roles);
-        let rolesVal = rolesLoc + 1;
+        let findIndexRole = rolesObj.findIndex(
+          (values) => values.title === response.roles
+        )
+        let indexArrRole = rolesObj[findIndexRole]
+        let roleId = indexArrRole.role_id
+
+        let employee = response.employee
+        let employeeSplit = employee.split(' ')
+        let findIndexEmp = employeesObj.findIndex(
+          (values) => values.first_name === employeeSplit[0] && values.last_name === employeeSplit[1]
+        )
+        let indexArrEmp = employeesObj[findIndexEmp]
+        let employeeId = indexArrEmp.emp_id;
+
+        console.log('employeeSplit', employeeSplit)
+        console.log('employeeId', employeeId)
 
         // Code in Progress
-        const sql = `UPDATE employees SET role_id = ${rolesVal} WHERE emp_id = ${firstName}`;
+        const sql = `UPDATE employees SET role_id = ${roleId} WHERE emp_id = ${employeeId}`;
         db.promise()
           .query(sql)
           .then(() => initialSelection())
@@ -345,7 +345,7 @@ function init() {
           let rowsArr = Object.values(rows[i])
           employeesArr.push(`${rowsArr[1]} ${rowsArr[2]}`)
         }
-        console.log('employeeArr:', employeeArr)
+        console.log('employeeArr:', employeesArr)
         employeesObj = rows
       }).catch((err) => console.log(err))
 
@@ -358,20 +358,10 @@ function init() {
       }
       console.log('rolesArr', rolesArr)
       rolesObj = rows;
+      runInquirer()
     })
     .catch((err) => console.log(err))
 
-    // Populate departmentsArr and departmentsObj
-    const sqlDept = 'SELECT * FROM departments'
-    db.promise().query(sqlDept).then(([rows, _]) => {
-      for (var i = 0; i < rows.lengths; i++) {
-        let rowsArr = Object.values(rows[i])
-        deptsArr.push(rowsArr[1])
-      }
-      console.log('deptsArr', deptsArr)
-      deptsObj = rows;
-      runInquirer()
-    })
   }
 
   initialSelection();
